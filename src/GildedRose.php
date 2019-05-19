@@ -14,6 +14,7 @@ class GildedRose
             'Aged Brie' => new AgedBrieModifier(),
             'Sulfuras, Hand of Ragnaros' => new SulfurasModifier(),
             'Backstage passes to a TAFKAL80ETC concert' => new BackstagePassModifier(),
+            'Conjured Mana Cake' => new ConjuredItemModifier(),
             'default' => new ItemModifier(),
         ];
     }
