@@ -7,12 +7,10 @@ use App\ItemModifier;
 class GildedRose
 {
     private $items;
-    private $itemModifier;
 
     public function __construct(array $items)
     {
         $this->items = $items;
-        $this->itemModifier = new ItemModifier();
     }
 
     public function getItem($which = null)
@@ -26,7 +24,12 @@ class GildedRose
     public function nextDay()
     {
         foreach ($this->items as $item) {
-            $this->itemModifier->nextDay($item);
+            $this->getItemModifier($item)->nextDay($item);
         }
+    }
+
+    private function getItemModifier(Item $item)
+    {
+        return new ItemModifier();
     }
 }
