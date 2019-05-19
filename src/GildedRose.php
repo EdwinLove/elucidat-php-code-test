@@ -2,15 +2,20 @@
 
 namespace App;
 
-use App\ItemModifier;
-
 class GildedRose
 {
     private $items;
+    private $itemModifiers;
 
     public function __construct(array $items)
     {
         $this->items = $items;
+        $this->itemModifiers = [
+            'Aged Brie' => new AgedBrieModifier(),
+            'Sulfuras, Hand of Ragnaros' => new SulfurasModifier(),
+            'Backstage passes to a TAFKAL80ETC concert' => new BackstagePassModifier(),
+            'default' => new ItemModifier(),
+        ];
     }
 
     public function getItem($which = null)
@@ -30,16 +35,10 @@ class GildedRose
 
     private function getItemModifier(Item $item)
     {
-        switch ($item->name) {
-            case 'Aged Brie':
-                return new AgedBrieModifier();
-            case 'Sulfuras, Hand of Ragnaros':
-                return new SulfurasModifier();
-            case 'Backstage passes to a TAFKAL80ETC concert':
-                return new BackstagePassModifier();
-            default:
-                return new ItemModifier();
-        } 
-        return new ItemModifier();
+        if (isset($this->itemModifiers[$item->name])) {
+            return $this->itemModifiers[$item->name];
+        }
+        
+        return $this->itemModifiers['default'];
     }
 }
