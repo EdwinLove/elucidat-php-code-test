@@ -30,6 +30,16 @@ class GildedRose
 
     private function getItemModifier(Item $item)
     {
+        switch ($item->name) {
+            case 'Aged Brie':
+                return new AgedBrieModifier();
+            case 'Sulfuras, Hand of Ragnaros':
+                return new SulfurasModifier();
+            case 'Backstage passes to a TAFKAL80ETC concert':
+                return new BackstagePassModifier();
+            default:
+                return new ItemModifier();
+        } 
         return new ItemModifier();
     }
 }
