@@ -2,8 +2,6 @@
 
 namespace App\Interfaces;
 
-use App\Item;
-
 interface HasTransientQuality
 {
     public function degrade(): HasTransientQuality;
