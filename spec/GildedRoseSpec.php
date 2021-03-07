@@ -203,11 +203,8 @@ describe('Gilded Rose', function () {
 
         /**
          * Additional tests
-         * 
-         * TODO - if I couldn't charm the Goblin, I'd probably
-         * look to lazy load a type 
          */
-        context("Instantiation Tests", function () {
+        context("Gilded Rose Instantiation Tests", function () {
             it('returns a LegendaryItem when passed correct name', function () {
                 $gr = new GildedRose([new Item('Sulfuras, Hand of Ragnaros', 10, 10)]);
                 expect($gr->getItem(0))->toBeAnInstanceOf(LegendaryItem::class);
@@ -229,6 +226,237 @@ describe('Gilded Rose', function () {
                 expect($gr->getItem(0))->toBeAnInstanceOf(BasicItem::class);
             });
         });
+    
+        context("BasicItem tests", function () {
+            it('BasicItem with 50 quality can be degraded', function () {
+                $item = new BasicItem(
+                    new Item('Beans on Toast', 50, 100)
+                );
+                
+                expect($item->canDegradeFurther())->toBe(true);
+            });
 
+            it('BasicItem with 0 quality cannot be degraded', function () {
+                $item = new BasicItem(
+                    new Item('Beans on Toast', 0, 100)
+                );
+                
+                expect($item->canDegradeFurther())->toBe(false);
+            });
+
+            it('BasicItem past sell-by date has degrade amount of 2', function () {
+                $item = new BasicItem(
+                    new Item('Beans on Toast', 10, -100)
+                );
+                
+                expect($item->getDegradationAmount())->toBe(2);
+            });
+
+            it('BasicItem past sell-by date with 1 quality degrades to 0', function () {
+                $item = new BasicItem(
+                    new Item('Beans on Toast', 1, -100)
+                );
+
+                $item->degrade();
+                
+                expect($item->quality)->toBe(0);
+            });
+
+            it('BasicItem past sell-by date with 2 quality degrades to 0', function () {
+                $item = new BasicItem(
+                    new Item('Beans on Toast', 2, -100)
+                );
+
+                $item->degrade();
+                
+                expect($item->quality)->toBe(0);
+            });
+
+            it('BasicItem before sell-by date has degrade amount of 1', function () {
+                $item = new BasicItem(
+                    new Item('Beans on Toast', 10, 100)
+                );
+                
+                expect($item->getDegradationAmount())->toBe(1);
+            });
+        });
+
+        context("MaturingItem tests", function () {
+            it('MaturingItem with 50 quality cannot be degraded', function () {
+                $item = new MaturingItem(
+                    new Item('Beans on Toast', 50, 100)
+                );
+
+                expect($item->canDegradeFurther())->toBe(false);
+            });
+
+            it('MaturingItem with 0 quality can be degraded', function () {
+                $item = new MaturingItem(
+                    new Item('Beans on Toast', 0, 100)
+                );
+
+                expect($item->canDegradeFurther())->toBe(true);
+            });
+
+            it('MaturingItem past sell-by date has degrade amount of -2', function () {
+                $item = new MaturingItem(
+                    new Item('Beans on Toast', 10, -100)
+                );
+
+                expect($item->getDegradationAmount())->toBe(-2);
+            });
+
+            it('MaturingItem past sell-by date with 49 quality degrades to 50', function () {
+                $item = new MaturingItem(
+                    new Item('Beans on Toast', 49, -100)
+                );
+
+                $item->degrade();
+
+                expect($item->quality)->toBe(50);
+            });
+
+            it('MaturingItem past sell-by date with 48 quality degrades to 50', function () {
+                $item = new MaturingItem(
+                    new Item('Beans on Toast', 48, -100)
+                );
+
+                $item->degrade();
+
+                expect($item->quality)->toBe(50);
+            });
+
+            it('MaturingItem before sell-by date has degrade amount of -1', function () {
+                $item = new MaturingItem(
+                    new Item('Beans on Toast', 10, 100)
+                );
+
+                expect($item->getDegradationAmount())->toBe(-1);
+            });
+        });
+
+        context("BackstagePass tests", function () {
+            it('BackstagePass with 50 quality cannot be degraded', function () {
+                $item = new BackstagePass(
+                    new Item('Beans on Toast', 50, 100)
+                );
+
+                expect($item->canDegradeFurther())->toBe(false);
+            });
+
+            it('BackstagePass with 0 quality can be degraded', function () {
+                $item = new BackstagePass(
+                    new Item('Beans on Toast', 0, 100)
+                );
+
+                expect($item->canDegradeFurther())->toBe(true);
+            });
+
+            it('BackstagePass 15 days before sell-by date has degrade amount of -1', function () {
+                $item = new BackstagePass(
+                    new Item('Beans on Toast', 10, 15)
+                );
+
+                expect($item->getDegradationAmount())->toBe(-1);
+            });
+
+            it('BackstagePass 6 days before sell-by date has degrade amount of -2', function () {
+                $item = new BackstagePass(
+                    new Item('Beans on Toast', 10, 6)
+                );
+
+                expect($item->getDegradationAmount())->toBe(-2);
+            });
+
+            it('BackstagePass 0 days before sell-by date has degrade amount of -3', function () {
+                $item = new BackstagePass(
+                    new Item('Beans on Toast', 10, 0)
+                );
+
+                expect($item->getDegradationAmount())->toBe(-3);
+            });
+
+            it('BackstagePass past sell-by date with 50 quality degrades to 0', function () {
+                $item = new BackstagePass(
+                    new Item('Beans on Toast', 50, -100)
+                );
+
+                $item->degrade();
+
+                expect($item->quality)->toBe(0);
+            });
+        });
+
+        context("LegendaryItem tests", function () {
+            it('LegendaryItem is not degradable', function () {
+                $item = new LegendaryItem(
+                    new Item('Beans on Toast', 50, 100)
+                );
+
+                expect($item->isDegradable())->toBe(false);
+            });
+
+            it('LegendaryItem does not need to be sold', function () {
+                $item = new LegendaryItem(
+                    new Item('Beans on Toast', 50, 100)
+                );
+
+                expect($item->needsToBeSold())->toBe(false);
+            });
+        });
+
+        context("ConjurableItem tests", function () {
+            it('ConjurableItem with 50 quality can be degraded', function () {
+                $item = new ConjurableItem(
+                    new Item('Beans on Toast', 50, 100)
+                );
+
+                expect($item->canDegradeFurther())->toBe(true);
+            });
+
+            it('ConjurableItem with 0 quality cannot be degraded', function () {
+                $item = new ConjurableItem(
+                    new Item('Beans on Toast', 0, 100)
+                );
+
+                expect($item->canDegradeFurther())->toBe(false);
+            });
+
+            it('ConjurableItem past sell-by date has degrade amount of 4', function () {
+                $item = new ConjurableItem(
+                    new Item('Beans on Toast', 10, -100)
+                );
+
+                expect($item->getDegradationAmount())->toBe(4);
+            });
+
+            it('ConjurableItem past sell-by date with 1 quality degrades to 0', function () {
+                $item = new ConjurableItem(
+                    new Item('Beans on Toast', 1, -100)
+                );
+
+                $item->degrade();
+
+                expect($item->quality)->toBe(0);
+            });
+
+            it('ConjurableItem past sell-by date with 4 quality degrades to 0', function () {
+                $item = new ConjurableItem(
+                    new Item('Beans on Toast', 2, -100)
+                );
+
+                $item->degrade();
+
+                expect($item->quality)->toBe(0);
+            });
+
+            it('ConjurableItem before sell-by date has degrade amount of 2', function () {
+                $item = new ConjurableItem(
+                    new Item('Beans on Toast', 10, 100)
+                );
+
+                expect($item->getDegradationAmount())->toBe(2);
+            });
+        });
     });
 });

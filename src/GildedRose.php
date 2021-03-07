@@ -3,7 +3,6 @@
 namespace App;
 
 use App\Degrader;
-use App\StockItem;
 
 /**
  * TODO - have a quiet word with the Goblin and see how he'd
