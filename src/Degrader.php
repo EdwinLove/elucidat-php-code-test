@@ -70,8 +70,25 @@ abstract class Degrader implements Degrades
         return static::$needsToBeSold;
     }
 
-    public function isPastSellByDate(Item $item): bool
+    public $item;
+
+    public function __construct(Item $item)
     {
-        return $item->sellIn < 0;
+        $this->item = $item;
+    }
+
+    public function __get($name)
+    {
+        return $this->item->$name;
+    }
+
+    public function __set($name, $value)
+    {
+        $this->item->$name = $value;
+    }
+
+    public function isPastSellByDate(): bool
+    {
+        return $this->sellIn < 0;
     }
 }

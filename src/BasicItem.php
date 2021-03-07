@@ -13,7 +13,7 @@ class BasicItem extends TransientQualityDegrader implements HasTransientQuality,
      * A basic item degrades until
      * quality hits 0
      */
-    public function getMaximisedDegredation(Item $item): int
+    public function getMaximisedDegredation(): int
     {
         return self::$minQuality;
     }

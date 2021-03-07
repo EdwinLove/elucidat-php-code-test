@@ -34,16 +34,16 @@ class MaturingItem extends TransientQualityDegrader implements HasTransientQuali
      * 
      * - Degraded quality is less than or equal to 50
      */
-    public function canDegradeFurther(Item $item): bool
+    public function canDegradeFurther(): bool
     {
-        return $item->quality - $this->getDegradationAmount($item) <= 50;
+        return $this->quality - $this->getDegradationAmount() <= 50;
     }
 
     /**
      * A maturing item degrades until quality
      * hits 50
      */
-    public function getMaximisedDegredation(Item $item): int
+    public function getMaximisedDegredation(): int
     {
         return self::$maxQuality;
     }

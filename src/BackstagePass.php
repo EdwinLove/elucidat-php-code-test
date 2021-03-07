@@ -29,9 +29,9 @@ class BackstagePass extends TransientQualityDegrader implements HasTransientQual
      * - Concert has not yet passed
      * - Degraded quality is less than 50
      */
-    public function canDegradeFurther(Item $item): bool
+    public function canDegradeFurther(): bool
     {
-        return !$this->isPastSellByDate($item) && $item->quality - $this->getDegradationAmount($item) < 50;
+        return !$this->isPastSellByDate() && $this->quality - $this->getDegradationAmount() < 50;
     }
 
     /**
@@ -45,13 +45,13 @@ class BackstagePass extends TransientQualityDegrader implements HasTransientQual
      *   just a fallback. Quality of an expired backstage
      *   pass is always 0.
      */
-    public function getStandardDegradationAmount(Item $item): int
+    public function getStandardDegradationAmount(): int
     {
-        if($item->sellIn >= 10) return -1;
+        if($this->sellIn >= 10) return -1;
 
-        if($item->sellIn >= 5) return -2;
+        if($this->sellIn >= 5) return -2;
 
-        if($item->sellIn >= 0) return -3;
+        if($this->sellIn >= 0) return -3;
 
         return 0;
     }
@@ -60,13 +60,13 @@ class BackstagePass extends TransientQualityDegrader implements HasTransientQual
      * Once the concert has passed, a backstage
      * pass loses all of its quality/value
      */
-    public function getPostSellByDateDegradationAmount(Item $item): int
+    public function getPostSellByDateDegradationAmount(): int
     {
-        return $item->quality;
+        return $this->quality;
     }
 
-    public function getMaximisedDegredation(Item $item): int
+    public function getMaximisedDegredation(): int
     {
-        return $this->isPastSellByDate($item) ? self::$minQuality : self::$maxQuality;
+        return $this->isPastSellByDate() ? self::$minQuality : self::$maxQuality;
     }
 }

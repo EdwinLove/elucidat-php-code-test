@@ -6,10 +6,10 @@ use App\Item;
 
 interface HasTransientQuality
 {
-    public function degrade(Item $item): Item;
-    public function canDegradeFurther(Item $item): bool;
-    public function getMaximisedDegredation(Item $item): int;
-    public function getDegradationAmount(Item $item): int;
-    public function getPostSellByDateDegradationAmount(Item $item): int;
-    public function getStandardDegradationAmount(Item $item): int;
+    public function degrade(): HasTransientQuality;
+    public function canDegradeFurther(): bool;
+    public function getMaximisedDegredation(): int;
+    public function getDegradationAmount(): int;
+    public function getPostSellByDateDegradationAmount(): int;
+    public function getStandardDegradationAmount(): int;
 }

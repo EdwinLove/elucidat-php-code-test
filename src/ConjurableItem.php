@@ -33,7 +33,7 @@ class ConjurableItem extends TransientQualityDegrader implements HasTransientQua
      * A conjurable item degrades until
      * quality hits 0
      */
-    public function getMaximisedDegredation(Item $item): int
+    public function getMaximisedDegredation(): int
     {
         return self::$minQuality;
     }

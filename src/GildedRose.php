@@ -11,9 +11,8 @@ use App\StockItem;
  * 
  * It'd make the codebase a bit tidier!
  * 
- * I've had to add some slightly awkward extensions
- * of the item class and logic in the GildedRose class
- * to get around this for now!
+ * I've had to use some slightly awkward workflows
+ * to get around this for now - I would ideally 
  */
 
 class GildedRose
@@ -30,8 +29,7 @@ class GildedRose
          * very efficient.
          */
         $this->items = array_map(function($item){
-            $item->degrader = Degrader::getDegrader($item);
-            return $item;
+            return Degrader::getDegrader($item);
         }, $items);
     }
 
@@ -50,15 +48,15 @@ class GildedRose
              * We only need to decrement sellIn
              * if the item needs to be sold
              */
-            if ($item->degrader->needsToBeSold()) {
+            if ($item->needsToBeSold()) {
                 $item->sellIn--;
             }
 
             /**
              * We only need to degrade degradable items
              */
-            if ($item->degrader->isDegradable()) {
-                $item->degrader->degrade($item);
+            if ($item->isDegradable()) {
+                $item->degrade($item);
             }
         }
     }

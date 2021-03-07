@@ -31,15 +31,15 @@ abstract class TransientQualityDegrader extends BaseDegrader implements HasTrans
      * Improving quality can be accounted for with
      * negative degradation values.
      */
-    public function degrade(Item $item): Item
+    public function degrade(): HasTransientQuality
     {
-        if ($this->canDegradeFurther($item)) {
-            $item->quality = $item->quality - $this->getDegradationAmount($item);
+        if ($this->canDegradeFurther()) {
+            $this->quality = $this->quality - $this->getDegradationAmount();
         } else {
-            $item->quality = $this->getMaximisedDegredation($item);
+            $this->quality = $this->getMaximisedDegredation();
         }
 
-        return $item;
+        return $this;
     }
 
     /**
@@ -48,16 +48,16 @@ abstract class TransientQualityDegrader extends BaseDegrader implements HasTrans
      * however much it should degrade based on its
      * sellIn
      */
-    public function canDegradeFurther(Item $item): bool
+    public function canDegradeFurther(): bool
     {
-        return $item->quality >= $this->getDegradationAmount($item);
+        return $this->quality >= $this->getDegradationAmount();
     }
 
     /**
      * Get the standard amount an item should degrade
      * by when the sell-by has not passed
      */
-    public function getStandardDegradationAmount(Item $item): int
+    public function getStandardDegradationAmount(): int
     {
         return $this->standardDegradationAmount;
     }
@@ -66,19 +66,19 @@ abstract class TransientQualityDegrader extends BaseDegrader implements HasTrans
      * Get the amount an item should degrade by when the
      * sell-by has passed (twice as fast as normal)
      */
-    public function getPostSellByDateDegradationAmount(Item $item): int
+    public function getPostSellByDateDegradationAmount(): int
     {
-        return $this->getStandardDegradationAmount($item) * 2;
+        return $this->getStandardDegradationAmount() * 2;
     }
 
     /**
      * Based on whether the sell-by has passed,
      * get the amount an item should degrade by
      */
-    public function getDegradationAmount(Item $item): int
+    public function getDegradationAmount(): int
     {
-        return $this->isPastSellByDate($item) ?
-            $this->getPostSellByDateDegradationAmount($item) :
-            $this->getStandardDegradationAmount($item);
+        return $this->isPastSellByDate() ?
+            $this->getPostSellByDateDegradationAmount() :
+            $this->getStandardDegradationAmount();
     }
 }
