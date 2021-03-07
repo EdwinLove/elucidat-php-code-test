@@ -2,13 +2,46 @@
 
 namespace App;
 
+use App\Item;
+use App\StockItem;
+
+/**
+ * TODO - have a quiet word with the Goblin and see how he'd
+ * feel about letting us make some tweaks to the Item class.
+ * 
+ * It'd make the codebase a bit tidier!
+ * 
+ * I've had to add some slightly awkward extensions
+ * of the item class and logic in the GildedRose class
+ * to get around this for now!
+ */
+
 class GildedRose
 {
-    private $items;
+    private $items = [];
 
     public function __construct(array $items)
     {
-        $this->items = $items;
+        foreach($items as $item){
+
+            $className = StockItem::getType($item);
+
+            array_push($this->items, new $className($item));
+
+        }
+    }
+
+    public static function degrade(Item $item)
+    {
+
+        /**
+         * We don't need to do anything if an item
+         * has a quality of greater than or equal to
+         * 50.
+         */
+        if($item->quality >= 50) return $item;
+
+
     }
 
     public function getItem($which = null)
