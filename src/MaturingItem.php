@@ -32,7 +32,7 @@ class MaturingItem extends TransientQualityItem implements Stock, HasTransientQu
     /**
      * A maturing item can further increase in quality when:
      * 
-     * - Quality after degrading is less than or equal to 50
+     * - Degraded quality is less than or equal to 50
      */
     public function canFurtherDegrade(): bool
     {

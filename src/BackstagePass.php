@@ -26,7 +26,7 @@ class BackstagePass extends TransientQualityItem implements Stock, HasTransientQ
      * A backstage pass can change quality when:
      * 
      * - Concert has not yet passed
-     * - Quality is less than 50
+     * - Degraded quality is less than 50
      */
     public function canFurtherDegrade(): bool
     {
