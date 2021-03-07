@@ -2,11 +2,11 @@
 
 namespace App;
 
-use App\StockItem;
-use App\Interfaces\Stock;
+use App\Interfaces\Degrader;
+use App\Degrader as BaseDegrader;
 use App\Interfaces\HasTransientQuality;
 
-abstract class TransientQualityItem extends StockItem implements Stock, HasTransientQuality
+abstract class TransientQualityDegrader extends BaseDegrader implements HasTransientQuality, Degrader
 {
     public static $minQuality = 0;
     public static $maxQuality = 50;
@@ -31,15 +31,15 @@ abstract class TransientQualityItem extends StockItem implements Stock, HasTrans
      * Improving quality can be accounted for with
      * negative degradation values.
      */
-    public function degrade(): HasTransientQuality
+    public function degrade(Item $item): Item
     {
-        if ($this->canFurtherDegrade()) {
-            $this->quality = $this->quality - $this->getDegradationAmount();
+        if ($this->canDegradeFurther($item)) {
+            $item->quality = $item->quality - $this->getDegradationAmount($item);
         } else {
-            $this->quality = $this->getMaximisedDegredation();
+            $item->quality = $this->getMaximisedDegredation($item);
         }
 
-        return $this;
+        return $item;
     }
 
     /**
@@ -48,16 +48,16 @@ abstract class TransientQualityItem extends StockItem implements Stock, HasTrans
      * however much it should degrade based on its
      * sellIn
      */
-    public function canFurtherDegrade(): bool
+    public function canDegradeFurther(Item $item): bool
     {
-        return $this->quality >= $this->getDegradationAmount();
+        return $item->quality >= $this->getDegradationAmount($item);
     }
 
     /**
      * Get the standard amount an item should degrade
      * by when the sell-by has not passed
      */
-    public function getStandardDegradationAmount(): int
+    public function getStandardDegradationAmount(Item $item): int
     {
         return $this->standardDegradationAmount;
     }
@@ -66,19 +66,19 @@ abstract class TransientQualityItem extends StockItem implements Stock, HasTrans
      * Get the amount an item should degrade by when the
      * sell-by has passed (twice as fast as normal)
      */
-    public function getPostSellByDateDegradationAmount(): int
+    public function getPostSellByDateDegradationAmount(Item $item): int
     {
-        return $this->getStandardDegradationAmount() * 2;
+        return $this->getStandardDegradationAmount($item) * 2;
     }
 
     /**
      * Based on whether the sell-by has passed,
      * get the amount an item should degrade by
      */
-    public function getDegradationAmount(): int
+    public function getDegradationAmount(Item $item): int
     {
-        return $this->isPastSellByDate() ?
-            $this->getPostSellByDateDegradationAmount() :
-            $this->getStandardDegradationAmount();
+        return $this->isPastSellByDate($item) ?
+            $this->getPostSellByDateDegradationAmount($item) :
+            $this->getStandardDegradationAmount($item);
     }
 }

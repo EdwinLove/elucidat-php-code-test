@@ -1,7 +1,12 @@
 <?php
 
+use App\BackstagePass;
+use App\BasicItem;
+use App\ConjurableItem;
 use App\Item;
 use App\GildedRose;
+use App\LegendaryItem;
+use App\MaturingItem;
 
 describe('Gilded Rose', function () {
     describe('next day', function () {
@@ -195,5 +200,35 @@ describe('Gilded Rose', function () {
                 expect($gr->getItem(0)->sellIn)->toBe(-11);
             });
         });
+
+        /**
+         * Additional tests
+         * 
+         * TODO - if I couldn't charm the Goblin, I'd probably
+         * look to lazy load a type 
+         */
+        context("Instantiation Tests", function () {
+            it('returns a LegendaryItem when passed correct name', function () {
+                $gr = new GildedRose([new Item('Sulfuras, Hand of Ragnaros', 10, 10)]);
+                expect($gr->getItem(0)->degrader)->toBeAnInstanceOf(LegendaryItem::class);
+            });
+            it('returns a MaturingItem when passed correct name', function () {
+                $gr = new GildedRose([new Item('Aged Brie', 10, 10)]);
+                expect($gr->getItem(0)->degrader)->toBeAnInstanceOf(MaturingItem::class);
+            });
+            it('returns a ConjurableItem when passed correct name', function () {
+                $gr = new GildedRose([new Item('Conjured Mana Cake', 10, 10)]);
+                expect($gr->getItem(0)->degrader)->toBeAnInstanceOf(ConjurableItem::class);
+            });
+            it('returns a BackstagePass when passed correct name', function () {
+                $gr = new GildedRose([new Item('Backstage passes to a TAFKAL80ETC concert', 10, 10)]);
+                expect($gr->getItem(0)->degrader)->toBeAnInstanceOf(BackstagePass::class);
+            });
+            it('returns a BasicItem when passed correct name', function () {
+                $gr = new GildedRose([new Item('Beans on Toast', 10, 10)]);
+                expect($gr->getItem(0)->degrader)->toBeAnInstanceOf(BasicItem::class);
+            });
+        });
+
     });
 });

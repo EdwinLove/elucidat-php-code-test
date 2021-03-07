@@ -2,7 +2,8 @@
 
 namespace App\Interfaces;
 
-interface Stock {
+interface Degrader
+{
     public static function isDegradable(): bool;
     public static function needsToBeSold(): bool;
 }

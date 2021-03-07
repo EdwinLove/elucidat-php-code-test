@@ -2,11 +2,12 @@
 
 namespace App;
 
-use App\Interfaces\Stock;
-use App\TransientQualityItem;
+use App\Item;
+use App\Interfaces\Degrader;
+use App\TransientQualityDegrader;
 use App\Interfaces\HasTransientQuality;
 
-class BackstagePass extends TransientQualityItem implements Stock, HasTransientQuality
+class BackstagePass extends TransientQualityDegrader implements HasTransientQuality, Degrader
 {
     /**
      * TODO - this is temporarily used
@@ -28,9 +29,9 @@ class BackstagePass extends TransientQualityItem implements Stock, HasTransientQ
      * - Concert has not yet passed
      * - Degraded quality is less than 50
      */
-    public function canFurtherDegrade(): bool
+    public function canDegradeFurther(Item $item): bool
     {
-        return !$this->isPastSellByDate() && $this->quality - $this->getDegradationAmount() < 50;
+        return !$this->isPastSellByDate($item) && $item->quality - $this->getDegradationAmount($item) < 50;
     }
 
     /**
@@ -44,13 +45,13 @@ class BackstagePass extends TransientQualityItem implements Stock, HasTransientQ
      *   just a fallback. Quality of an expired backstage
      *   pass is always 0.
      */
-    public function getStandardDegradationAmount(): int
+    public function getStandardDegradationAmount(Item $item): int
     {
-        if($this->sellIn >= 10) return -1;
+        if($item->sellIn >= 10) return -1;
 
-        if($this->sellIn >= 5) return -2;
+        if($item->sellIn >= 5) return -2;
 
-        if($this->sellIn >= 0) return -3;
+        if($item->sellIn >= 0) return -3;
 
         return 0;
     }
@@ -59,13 +60,13 @@ class BackstagePass extends TransientQualityItem implements Stock, HasTransientQ
      * Once the concert has passed, a backstage
      * pass loses all of its quality/value
      */
-    public function getPostSellByDateDegradationAmount(): int
+    public function getPostSellByDateDegradationAmount(Item $item): int
     {
-        return $this->quality;
+        return $item->quality;
     }
 
-    public function getMaximisedDegredation(): int
+    public function getMaximisedDegredation(Item $item): int
     {
-        return $this->isPastSellByDate() ? self::$minQuality : self::$maxQuality;
+        return $this->isPastSellByDate($item) ? self::$minQuality : self::$maxQuality;
     }
 }

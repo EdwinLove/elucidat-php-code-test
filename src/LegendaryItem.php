@@ -2,12 +2,13 @@
 
 namespace App;
 
-use App\Interfaces\Stock;
+use App\Interfaces\Degrader;
 use App\StaticQualityItem;
 
-class LegendaryItem extends StaticQualityItem implements Stock
+class LegendaryItem extends StaticQualityItem implements Degrader
 {
     public static $needsToBeSold = false;
+    public static $isDegradable = false;
 
     /**
      * TODO - this is temporarily used

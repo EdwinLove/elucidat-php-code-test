@@ -2,11 +2,12 @@
 
 namespace App;
 
-use App\Interfaces\Stock;
-use App\TransientQualityItem;
+use App\Item;
+use App\Interfaces\Degrader;
+use App\TransientQualityDegrader;
 use App\Interfaces\HasTransientQuality;
 
-class ConjurableItem extends TransientQualityItem implements Stock, HasTransientQuality
+class ConjurableItem extends TransientQualityDegrader implements HasTransientQuality, Degrader
 {
     /**
      * TODO - this is temporarily used
@@ -32,7 +33,7 @@ class ConjurableItem extends TransientQualityItem implements Stock, HasTransient
      * A conjurable item degrades until
      * quality hits 0
      */
-    public function getMaximisedDegredation(): int
+    public function getMaximisedDegredation(Item $item): int
     {
         return self::$minQuality;
     }

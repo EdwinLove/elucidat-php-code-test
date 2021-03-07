@@ -2,10 +2,10 @@
 
 namespace App;
 
-use App\StockItem;
-use App\Interfaces\Stock;
+use App\Interfaces\Degrader;
+use App\Degrader as BaseDegrader;
 
-abstract class StaticQualityItem extends StockItem implements Stock
+abstract class StaticQualityItem extends BaseDegrader implements Degrader
 {
     /**
      * Static quality items do not degrade

@@ -8,25 +8,27 @@ use App\MaturingItem;
 use App\BackstagePass;
 use App\LegendaryItem;
 use App\ConjurableItem;
+use App\Interfaces\Degrader as Degrades;
 use App\Interfaces\Stock;
 
-abstract class StockItem extends Item implements Stock
+abstract class Degrader implements Degrades
 {
     public static $degradable = true;
     public static $needsToBeSold = true;
 
-    /**
-     * TODO - Slightly awkward constructor to instantiate our
-     * specific type of item using data from the original
-     * item
-     * 
-     * This wouldn't be necessary if we could vary the type
-     * we're passing in the existing tests, but I'll assume
-     * that isn't allowed!
-     */
-    public function __construct(Item $item)
+    public static function getDegrader(Item $item)
     {
-        parent::__construct($item->name, $item->quality, $item->sellIn);
+        if (self::hasLegendaryName($item)) {
+            $class = LegendaryItem::class;
+        } else if (self::hasBackstagePassName($item)) {
+            $class = BackstagePass::class;
+        } else if (self::hasMaturingName($item)) {
+            $class = MaturingItem::class;
+        } else if (self::hasConjurableName($item)) {
+            $class = ConjurableItem::class;
+        } else $class = BasicItem::class;
+
+        return new $class($item);
     }
 
     /**
@@ -58,26 +60,6 @@ abstract class StockItem extends Item implements Stock
         return in_array($item->name, BackstagePass::$names);
     }
 
-    /**
-     * TODO - an artifact of not being able to
-     * have an itemType property of Item.
-     * 
-     * We'll no longer need this if we can
-     * sweet talk the Goblin
-     */
-    public static function getType(Item $item): string
-    {
-        if (self::hasLegendaryName($item)) {
-            return LegendaryItem::class;
-        } else if (self::hasBackstagePassName($item)) {
-            return BackstagePass::class;
-        } else if (self::hasMaturingName($item)) {
-            return MaturingItem::class;
-        } else if (self::hasConjurableName($item)) {
-            return ConjurableItem::class;
-        } else return BasicItem::class;
-    }
-
     public static function isDegradable(): bool
     {
         return static::$degradable;
@@ -88,8 +70,8 @@ abstract class StockItem extends Item implements Stock
         return static::$needsToBeSold;
     }
 
-    public function isPastSellByDate(): bool
+    public function isPastSellByDate(Item $item): bool
     {
-        return $this->sellIn < 0;
+        return $item->sellIn < 0;
     }
 }

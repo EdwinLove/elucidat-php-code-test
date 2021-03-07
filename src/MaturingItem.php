@@ -2,11 +2,11 @@
 
 namespace App;
 
-use App\Interfaces\Stock;
+use App\Item;
+use App\Interfaces\Degrader;
 use App\Interfaces\HasTransientQuality;
 
-
-class MaturingItem extends TransientQualityItem implements Stock, HasTransientQuality
+class MaturingItem extends TransientQualityDegrader implements HasTransientQuality, Degrader
 {
     /**
      * TODO - this is temporarily used
@@ -34,16 +34,16 @@ class MaturingItem extends TransientQualityItem implements Stock, HasTransientQu
      * 
      * - Degraded quality is less than or equal to 50
      */
-    public function canFurtherDegrade(): bool
+    public function canDegradeFurther(Item $item): bool
     {
-        return $this->quality - $this->getDegradationAmount() <= 50;
+        return $item->quality - $this->getDegradationAmount($item) <= 50;
     }
 
     /**
      * A maturing item degrades until quality
      * hits 50
      */
-    public function getMaximisedDegredation(): int
+    public function getMaximisedDegredation(Item $item): int
     {
         return self::$maxQuality;
     }

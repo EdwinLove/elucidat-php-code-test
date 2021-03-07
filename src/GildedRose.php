@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Degrader;
 use App\StockItem;
 
 /**
@@ -17,15 +18,21 @@ use App\StockItem;
 
 class GildedRose
 {
-    private $items = [];
+    private $items;
 
     public function __construct(array $items)
     {
-        foreach ($items as $item) {
-            $className = StockItem::getType($item);
-
-            array_push($this->items, new $className($item));
-        }
+        /**
+         * We'll associate the appropriate degrader with 
+         * the item at this point. If this isn't allowed,
+         * we could just as easily run the getDegrader
+         * method every time we need it, but it wouldn't be
+         * very efficient.
+         */
+        $this->items = array_map(function($item){
+            $item->degrader = Degrader::getDegrader($item);
+            return $item;
+        }, $items);
     }
 
     public function getItem($which = null)
@@ -38,13 +45,20 @@ class GildedRose
     public function nextDay()
     {
         foreach ($this->items as $item) {
-            if ($item->needsToBeSold()) {
-                $item->sellIn = $item->sellIn - 1;
+
+            /**
+             * We only need to decrement sellIn
+             * if the item needs to be sold
+             */
+            if ($item->degrader->needsToBeSold()) {
+                $item->sellIn--;
             }
 
-
-            if ($item->isDegradable()) {
-                $item->degrade();
+            /**
+             * We only need to degrade degradable items
+             */
+            if ($item->degrader->isDegradable()) {
+                $item->degrader->degrade($item);
             }
         }
     }
