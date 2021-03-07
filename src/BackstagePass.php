@@ -64,10 +64,8 @@ class BackstagePass extends TransientQualityItem implements Stock, HasTransientQ
         return $this->quality;
     }
 
-    public function maximiseDegredation(): HasTransientQuality
+    public function getMaximisedDegredation(): int
     {
-        $this->quality = $this->isPastSellByDate() ? 0 : 50;
-
-        return $this;
+        return $this->isPastSellByDate() ? self::$minQuality : self::$maxQuality;
     }
 }

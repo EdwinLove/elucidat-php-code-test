@@ -8,6 +8,9 @@ use App\Interfaces\HasTransientQuality;
 
 abstract class TransientQualityItem extends StockItem implements Stock, HasTransientQuality
 {
+    public static $minQuality = 0;
+    public static $maxQuality = 50;
+
     /**
      * Transient quality items degrade
      */
@@ -30,17 +33,17 @@ abstract class TransientQualityItem extends StockItem implements Stock, HasTrans
      */
     public function degrade(): HasTransientQuality
     {
-        if($this->canFurtherDegrade()){
+        if ($this->canFurtherDegrade()) {
             $this->quality = $this->quality - $this->getDegradationAmount();
         } else {
-            $this->maximiseDegredation();
+            $this->quality = $this->getMaximisedDegredation();
         }
 
         return $this;
     }
 
     /**
-     * A basic item can degrade as long
+     * A transient quality item can degrade as long
      * as it has a quality greater than or equal to
      * however much it should degrade based on its
      * sellIn
@@ -50,11 +53,9 @@ abstract class TransientQualityItem extends StockItem implements Stock, HasTrans
         return $this->quality >= $this->getDegradationAmount();
     }
 
-    public function maximiseDegredation(): HasTransientQuality
+    public function getMaximisedDegredation(): int
     {
-        $this->quality = 0;
-
-        return $this;
+        return self::$minQuality;
     }
 
     /**
