@@ -53,11 +53,6 @@ abstract class TransientQualityItem extends StockItem implements Stock, HasTrans
         return $this->quality >= $this->getDegradationAmount();
     }
 
-    public function getMaximisedDegredation(): int
-    {
-        return self::$minQuality;
-    }
-
     /**
      * Get the standard amount an item should degrade
      * by when the sell-by has not passed

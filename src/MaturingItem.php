@@ -39,8 +39,12 @@ class MaturingItem extends TransientQualityItem implements Stock, HasTransientQu
         return $this->quality - $this->getDegradationAmount() <= 50;
     }
 
+    /**
+     * A maturing item degrades until quality
+     * hits 50
+     */
     public function getMaximisedDegredation(): int
     {
-        return self::$maxQuality;;
+        return self::$maxQuality;
     }
 }

@@ -27,4 +27,13 @@ class ConjurableItem extends TransientQualityItem implements Stock, HasTransient
      * as fast as normal items
      */
     protected $standardDegradationAmount = 2;
+
+    /**
+     * A conjurable item degrades until
+     * quality hits 0
+     */
+    public function getMaximisedDegredation(): int
+    {
+        return self::$minQuality;
+    }
 }
