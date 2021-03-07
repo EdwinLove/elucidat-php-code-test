@@ -7,6 +7,8 @@ use App\StaticQualityItem;
 
 class LegendaryItem extends StaticQualityItem implements Stock
 {
+    public static $needsToBeSold = false;
+
     /**
      * TODO - this is temporarily used
      * to determine whether an item should

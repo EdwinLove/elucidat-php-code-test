@@ -20,31 +20,6 @@ abstract class TransientQualityItem extends StockItem implements Stock, HasTrans
     protected $standardDegradationAmount = 1;
 
     /**
-     * A transient quality item can degrade as long
-     * as it has a quality greater than or equal to
-     * however much it should degrade based on its
-     * sellIn
-     */
-    public function canFurtherDegrade(): bool
-    {
-        return $this->quality >= $this->getDegradationAmount();
-    }
-
-    /**
-     * If a transient quality item can further degrade,
-     * get the amount it should degrade based on its sellIn.
-     * Otherwise, return the current quality.
-     * 
-     * This accounts for situations such as where quality is 1 but
-     * the degradation amount is 2, or where quality is 49
-     * but degradation amount is -2.
-     */
-    public function getMaxPossibleDegradationAmount(): int
-    {
-        return $this->canFurtherDegrade() ? $this->getDegradationAmount() : $this->quality;
-    }
-
-    /**
      * Perform degradation.
      * 
      * Remove the appropriate amount of quality from
@@ -55,7 +30,29 @@ abstract class TransientQualityItem extends StockItem implements Stock, HasTrans
      */
     public function degrade(): HasTransientQuality
     {
-        $this->quality = $this->quality - $this->getMaxPossibleDegradationAmount();
+        if($this->canFurtherDegrade()){
+            $this->quality = $this->quality - $this->getDegradationAmount();
+        } else {
+            $this->maximiseDegredation();
+        }
+
+        return $this;
+    }
+
+    /**
+     * A basic item can degrade as long
+     * as it has a quality greater than or equal to
+     * however much it should degrade based on its
+     * sellIn
+     */
+    public function canFurtherDegrade(): bool
+    {
+        return $this->quality >= $this->getDegradationAmount();
+    }
+
+    public function maximiseDegredation(): HasTransientQuality
+    {
+        $this->quality = 0;
 
         return $this;
     }

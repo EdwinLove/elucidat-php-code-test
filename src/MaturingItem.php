@@ -30,21 +30,19 @@ class MaturingItem extends TransientQualityItem implements Stock, HasTransientQu
     protected $standardDegradationAmount = -1;
 
     /**
-     * The degradation behaviour for maturing items does not
-     * change after the sell-by date.
-     */
-    public function getPostSellByDateDegradationAmount(): int
-    {
-        return $this->getStandardDegradationAmount();
-    }
-
-    /**
      * A maturing item can further increase in quality when:
      * 
      * - Quality is less than 50
      */
     public function canFurtherDegrade(): bool
     {
-        return $this->quality < 50;
+        return $this->quality - $this->getDegradationAmount() < 50;
+    }
+
+    public function maximiseDegredation(): HasTransientQuality
+    {
+        $this->quality = 50;
+
+        return $this;
     }
 }

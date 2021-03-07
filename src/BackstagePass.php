@@ -30,28 +30,27 @@ class BackstagePass extends TransientQualityItem implements Stock, HasTransientQ
      */
     public function canFurtherDegrade(): bool
     {
-        return $this->sellIn > -1
-            && $this->quality < 50;
+        return !$this->isPastSellByDate() && $this->quality - $this->getDegradationAmount() < 50;
     }
 
     /**
      * A backstage pass increases in quality the closer
      * it gets to the date of the concert.
      * 
-     * - When over 10 days remaining, increase quality by 1
-     * - When 6-10 days remaining, increase quality by 2
-     * - When 1-5 days remaining, increase quality by 3
+     * - When 10 or more days remaining, increase quality by 1
+     * - When 5-9 days remaining, increase quality by 2
+     * - When 0-4 days remaining, increase quality by 3
      * - Otherwise, do not change quality - note this is 
      *   just a fallback. Quality of an expired backstage
      *   pass is always 0.
      */
     public function getStandardDegradationAmount(): int
     {
-        if($this->sellIn > 10) return -1;
+        if($this->sellIn >= 10) return -1;
 
-        if($this->sellIn > 5) return -2;
+        if($this->sellIn >= 5) return -2;
 
-        if($this->sellIn > 0) return -3;
+        if($this->sellIn >= 0) return -3;
 
         return 0;
     }
@@ -63,5 +62,12 @@ class BackstagePass extends TransientQualityItem implements Stock, HasTransientQ
     public function getPostSellByDateDegradationAmount(): int
     {
         return $this->quality;
+    }
+
+    public function maximiseDegredation(): HasTransientQuality
+    {
+        $this->quality = $this->isPastSellByDate() ? 0 : 50;
+
+        return $this;
     }
 }

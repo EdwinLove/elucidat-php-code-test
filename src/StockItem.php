@@ -13,6 +13,7 @@ use App\Interfaces\Stock;
 abstract class StockItem extends Item implements Stock
 {
     public static $degradable = true;
+    public static $needsToBeSold = true;
 
     /**
      * TODO - Slightly awkward constructor to instantiate our
@@ -79,7 +80,12 @@ abstract class StockItem extends Item implements Stock
 
     public static function isDegradable(): bool
     {
-        return self::$degradable;
+        return static::$degradable;
+    }
+
+    public static function needsToBeSold(): bool
+    {
+        return static::$needsToBeSold;
     }
 
     public function isPastSellByDate(): bool
