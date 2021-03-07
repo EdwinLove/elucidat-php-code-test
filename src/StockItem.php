@@ -14,6 +14,15 @@ abstract class StockItem extends Item implements Stock
 {
     public static $degradable = true;
 
+    /**
+     * TODO - Slightly awkward constructor to instantiate our
+     * specific type of item using data from the original
+     * item
+     * 
+     * This wouldn't be necessary if we could vary the type
+     * we're passing in the existing tests, but I'll assume
+     * that isn't allowed!
+     */
     public function __construct(Item $item)
     {
         parent::__construct($item->name, $item->quality, $item->sellIn);
