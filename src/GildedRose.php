@@ -11,7 +11,8 @@ use App\Degrader;
  * It'd make the codebase a bit tidier!
  * 
  * I've had to use some slightly awkward workflows
- * to get around this for now - I would ideally 
+ * to get around this for now - I would ideally put 
+ * a fair bit of this work into the Item class!
  */
 
 class GildedRose
